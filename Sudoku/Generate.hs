@@ -32,5 +32,6 @@ generate solver = do
 				newBoard = Board . Map.delete p . getMap $ board
 
 solves :: Solver -> Board -> Bool
-solves solver board = length solutions == 1 && isComplete (head solutions) where
-	solutions = solver board
+solves solver board = case solver board of
+	[x] -> isComplete x
+	_ -> False

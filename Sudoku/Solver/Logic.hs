@@ -38,14 +38,16 @@ type Theory = [OneClause]
 --   the constraints of Sudoku.
 
 initialTheory :: Theory
-initialTheory = concatMap genTheory [rvt,rct,cvt,bvt] where
+initialTheory = concatMap genTheory [rvt,cvt,pvt,bvt] where
     rvt row val idx = mkVar row idx val
-    rct row col idx = mkVar row col idx
     cvt col val idx = mkVar idx col val
+    pvt row col idx = mkVar row col idx
     bvt blk val idx = mkVar (3*mjr+mnr+1) (3*mjc+mnc+1) val where
     	(mjr,mjc) = divMod (blk-1) 3
     	(mnr,mnc) = divMod (idx-1) 3
-    genTheory f = [Set.fromList [f a b idx | idx <- [1..9]] | a <- [1..9],b <- [1..9]]
+    genTheory f = [ Set.fromList [f a b idx | idx <- [1..9]]
+                  | a <- [1..9]
+                  , b <- [1..9]]
 
 -- | The `Union` type is simply `Set` as a `Monoid` via `union`.
  
