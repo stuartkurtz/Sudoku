@@ -51,11 +51,11 @@ initialTheory = concatMap genTheory [rvt,cvt,pvt,bvt] where
 
 -- | The `Union` type is simply `Set` as a `Monoid` via `union`.
  
-newtype Union a = Union { getSet :: Set a }
+newtype Union a = Union { getUnion :: Set a }
 
 instance Ord a => Monoid (Union a) where
 	mempty = Union empty
-	mappend x y = Union (getSet x `union` getSet y)
+	mappend x y = Union (getUnion x `union` getUnion y)
 
 -- | The reduction monad. A computation that reduces the `Theory` contained in the
 --   `State`, while writing a set of variables that become asserted through the
@@ -102,7 +102,7 @@ lsolve board = [mkBoard . execReduction $ reduceAsserts vars]
 	where
 		vars = Set.fromList . Map.toList . getMap $ board
 		execReduction r = execWriter . execStateT r $ initialTheory
-		mkBoard = Board . Map.fromList . Set.toList . getSet
+		mkBoard = Board . Map.fromList . Set.toList . getUnion
 
 -- | A mashup of `map` and `partitionEithers`.
 

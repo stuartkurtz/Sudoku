@@ -1,5 +1,5 @@
 name:               sudoku
-version:            0.1.0.1
+version:            0.1.0.2
 synopsis:           A sudoku solver/generator
 description:        A Sudoku solver/generator, with both backtracking and logic-based
                     solvers.
@@ -7,13 +7,13 @@ license:            GPL-3
 license-file:       LICENSE
 author:             Stuart A. Kurtz
 maintainer:         stuart@cs.uchicago.edu
-copyright:          © 2013, Stuart A. Kurtz, All Rights Reserved.
+copyright:          © 2013-2014, Stuart A. Kurtz, All Rights Reserved.
 category:            Game
 build-type:          Simple
 cabal-version:       >=1.8
 
 library
-  build-depends:       base ==4.6.*, containers, mtl==2.1.*, random==1.0.*, nstate==0.2.*
+  build-depends:  base==4.7.*, containers, mtl==2.1.*, random==1.0.*, nstate==0.2.*
   exposed-modules: Sudoku.Base, Sudoku.Solver.Backtracking, Sudoku.Solver.Logic,
                  Sudoku.Generate
 
@@ -21,6 +21,6 @@ executable sudoku
   main-is: sudoku.hs      
   other-modules: Sudoku.Base, Sudoku.Solver.Backtracking, Sudoku.Solver.Logic,
                  Sudoku.Generate
-  build-depends:       base ==4.6.*, containers, mtl==2.1.*, random==1.0.*, nstate==0.2.*
+  build-depends: base==4.7.*, containers, mtl==2.1.*, random==1.0.*, nstate==0.2.*
 
   

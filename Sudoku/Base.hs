@@ -32,7 +32,7 @@ instance Read Board where
 				   . Map.fromList
 			       . map (\(p,v) -> (p,ord v - ord '0'))
 			       $ assocs
-		isEntry = liftM2 (||) isDigit (`elem` ".-_")
+		isEntry c = isDigit c || c `elem` ".-_"
 			
 
 instance Show Board where
