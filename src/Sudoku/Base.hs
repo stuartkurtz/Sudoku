@@ -21,6 +21,9 @@ positions = (,) <$> [1..9] <*> [1..9]
 
 newtype Board = Board { getMap :: Map Position Int }
 
+-- | A simple read instance for a 'Board', based on the natural file
+--   format.
+
 instance Read Board where
     readsPrec _ = readP_to_S parseBoard where
         parseBoard = do
@@ -31,6 +34,8 @@ instance Read Board where
                  $ assocs
         isEntry c = isDigit c || c `elem` ".-_"
 
+-- | A simple 'Show' instance for 'Board', compatible with its 'Read'
+--   instance.
 
 instance Show Board where
     show (Board board) = concatMap fmt positions where
@@ -44,6 +49,10 @@ instance Show Board where
         entry pos = case Map.lookup pos board of
             Just x  -> show x
             Nothing -> "."
+            
+-- | A predicate on 'Board' which holds when the board contains a value
+--   for every position. Note that this implementation is intended for
+--   speed, and could be mislead by bad code.
 
 isComplete :: Board -> Bool
 isComplete (Board b) = Map.size b == 81
