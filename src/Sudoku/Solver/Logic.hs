@@ -64,7 +64,7 @@ reduceAsserts asserts = do
     theory <- get
     let (reducedTheory,denials) = eitherMap reduceClause theory
     put reducedTheory
-    unless (null denials) $ do
+    unless (null denials) $
         reduceDenials (unions denials)
     where
         reduceClause clause =
@@ -81,7 +81,7 @@ reduceDenials denials = do
     theory <- get
     let (reducedTheory,asserts) = eitherMap reduceClause theory
     put reducedTheory
-    unless (null asserts) $ do
+    unless (null asserts) $
         reduceAsserts (unions asserts)
     where
         reduceClause clause = case Set.size diffs of
@@ -95,11 +95,10 @@ reduceDenials denials = do
 --   one "solution," which may not be complete.
 
 lsolve :: Solver
-lsolve board = [mkBoard . execReduction $ reduceAsserts vars]
-    where
-        vars = Map.foldMapWithKey (curry Set.singleton) . getMap $ board
-        execReduction r = execWriter $ execStateT r initialTheory
-        mkBoard = Board . foldMap (uncurry Map.singleton) . getUnion
+lsolve board = [mkBoard . execReduction $ reduceAsserts vars] where
+    vars = Map.foldMapWithKey (curry Set.singleton) . getMap $ board
+    execReduction r = execWriter $ execStateT r initialTheory
+    mkBoard = Board . foldMap (uncurry Map.singleton) . getUnion
 
 -- | A mashup of `map` and `partitionEithers`.
 
