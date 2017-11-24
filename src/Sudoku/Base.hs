@@ -26,10 +26,9 @@ instance Read Board where
         parseBoard = do
             entries <- replicateM 81 (skipSpaces >> satisfy isEntry)
             let assocs = filter (isDigit . snd) $ zip positions entries
-            return . Board
-                   . Map.fromList
-                   . map (\(p,v) -> (p,ord v - ord '0'))
-                   $ assocs
+            pure . Board
+                 . foldMap (\(p,v) -> Map.singleton p (ord v - ord '0'))
+                 $ assocs
         isEntry c = isDigit c || c `elem` ".-_"
 
 

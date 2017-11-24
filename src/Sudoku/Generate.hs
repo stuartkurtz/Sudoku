@@ -1,28 +1,29 @@
 module Sudoku.Generate where
 
 import Control.Monad.State
-import Data.List (sort)
-import Data.Map ((!))
+import Data.Ord (comparing)
+import Data.List (sortBy)
 import qualified Data.Map as Map
+import Data.Traversable (for)
 import Sudoku.Base
 import Sudoku.Solver.Backtracking
 import System.Random
 
 type RandState = State StdGen
 
-permute :: Ord a => [a] -> RandState [a]
+permute :: [a] -> RandState [a]
 permute as = do
     bs <- replicateM (length as) (state random) :: RandState [Int]
-    return . map snd . sort $ zip bs as
+    pure . map snd . sortBy (comparing fst) $ zip bs as
 
 generate :: Solver -> RandState Board
 generate solver = do
-    constraints <- fmap Map.fromList . forM positions $ \pos -> do
-        vs <- permute [1..9]
-        return (pos,vs)
-    let answer = head $ backtrack (constraints !) (Board Map.empty)
-    rpos <- permute positions
-    return $ prune answer rpos
+    constraints <- Map.unions
+                <$> ( for positions $ \pos -> do
+                        Map.singleton pos <$> permute [1..9]
+                    )
+    let answer = head $ backtrack (constraints Map.!) (Board Map.empty)
+    prune answer <$> permute positions
     where
         prune = foldl $ \board pos ->
             let newBoard = Board . Map.delete pos . getMap $ board

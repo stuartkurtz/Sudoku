@@ -4,15 +4,16 @@ module Sudoku.Solver.Logic where
 
 import Control.Monad.Writer
 import Control.Monad.State
-import Control.Union
 import Data.Either
 import qualified Data.Map as Map
 import Data.Set (Set,(\\),intersection,unions)
 import qualified Data.Set as Set
+
+import Data.Union
 import Sudoku.Base
 
--- | A variable is given the same type as a `Board` association for computational
---   convenience.
+-- | A variable is given the same type as a `Board` association for 
+--   computational convenience.
 
 type Var = (Position,Int)
 
@@ -24,8 +25,8 @@ mkVar :: Int -- ^ row
       -> Var
 mkVar row col val = ((row,col),val)
 
--- | The type of a 1-clause in our logic. A 1-clause asserts that precisely one
---   of a set of variables is true.
+-- | The type of a 1-clause in our logic. A 1-clause asserts that 
+--   precisely one of a set of variables is true.
 
 type OneClause = Set Var
 
@@ -33,8 +34,8 @@ type OneClause = Set Var
 
 type Theory = [OneClause]
 
--- | The initial `Theory`, which consists the list of 1-clauses that makes up
---   the constraints of Sudoku.
+-- | The initial `Theory`, which consists of the list of 1-clauses that 
+--   makes up the constraints of Sudoku.
 
 initialTheory :: Theory
 initialTheory = concatMap genTheory [rvc,cvc,pvc,bvc] where
@@ -48,13 +49,14 @@ initialTheory = concatMap genTheory [rvc,cvc,pvc,bvc] where
                   | a <- [1..9]
                   , b <- [1..9]]
 
--- | The reduction monad. A computation that reduces the `Theory` contained in the
---   `State`, while writing a set of variables that become asserted through the
---   reduction process.
+-- | The reduction monad. A computation that reduces the `Theory` 
+--   contained in the `State`, while writing a set of variables
+--   that become asserted through the reduction process.
 
 type Reduction = StateT Theory (Writer (Union Var))
 
--- | Construct a `Reduction` that begins with asserting the argument's variables.
+-- | Construct a `Reduction` that begins with asserting the
+--   argument's variables.
 
 reduceAsserts :: Set Var -> Reduction ()
 reduceAsserts asserts = do
@@ -65,12 +67,14 @@ reduceAsserts asserts = do
     unless (null denials) $ do
         reduceDenials (unions denials)
     where
-        reduceClause clause = case Set.size (asserts `intersection` clause) of
-            0 -> Left clause
-            1 -> Right (clause \\ asserts)
-            _ -> error "inconsistent problem"
+        reduceClause clause =
+            case Set.size (asserts `intersection` clause) of
+                0 -> Left clause
+                1 -> Right (clause \\ asserts)
+                _ -> error "inconsistent problem"
 
--- | Construct a `Reduction` that begins with denying the argument's variables.
+-- | Construct a `Reduction` that begins with denying the argument's 
+--   variables.
 
 reduceDenials :: Set Var -> Reduction ()
 reduceDenials denials = do
@@ -87,15 +91,15 @@ reduceDenials denials = do
             where
                 diffs = clause \\ denials
 
--- | A logic based Sudoku solver. Note that this will return one solution, which may
---   not be complete.
+-- | A logic based Sudoku solver. Note that this will return exactly
+--   one "solution," which may not be complete.
 
 lsolve :: Solver
 lsolve board = [mkBoard . execReduction $ reduceAsserts vars]
     where
-        vars = Set.fromList . Map.toList . getMap $ board
-        execReduction r = execWriter . execStateT r $ initialTheory
-        mkBoard = Board . Map.fromList . Set.toList . getUnion
+        vars = Map.foldMapWithKey (curry Set.singleton) . getMap $ board
+        execReduction r = execWriter $ execStateT r initialTheory
+        mkBoard = Board . foldMap (uncurry Map.singleton) . getUnion
 
 -- | A mashup of `map` and `partitionEithers`.
 

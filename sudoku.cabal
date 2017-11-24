@@ -1,20 +1,29 @@
 name:               sudoku
-version:            0.1.0.3
-synopsis:           A sudoku solver/generator
-description:        A Sudoku solver/generator, with both backtracking and logic-based
-                    solvers.
+version:            0.1.0.4
+synopsis:           A Sudoku solver/generator
+description:        A Sudoku solver/generator, with both backtracking
+                    and logic-based solvers.
 license:            GPL-3
 license-file:       LICENSE
 author:             Stuart A. Kurtz
 maintainer:         stuart@cs.uchicago.edu
 copyright:          © 2013-2016, Stuart A. Kurtz, All Rights Reserved.
-category:            Game
-build-type:          Simple
-cabal-version:       >=1.10
+category:           Game
+build-type:         Simple
+cabal-version:      >=1.10
 
 executable sudoku
   main-is           : Main.hs
-  build-depends     : base, containers, mtl, random, nstate
+  other-modules     : Data.Union
+                    , Sudoku.Base
+                    , Sudoku.Generate
+                    , Sudoku.Solver.Backtracking
+                    , Sudoku.Solver.Logic
+  build-depends     : base==4.10.*
+                    , containers==0.5.*
+                    , mtl==2.2.*
+                    , random==1.1.*
+                    , nstate==0.2.*
   hs-source-dirs    : src
   default-language  : Haskell2010
   ghc-options       : -Wall

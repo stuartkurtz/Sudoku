@@ -41,7 +41,7 @@ processArg arg
     | otherwise = do
         solver <- get
         liftIO $ do
-            board <- fmap read (readFile arg) :: IO Board
+            board <- read <$> readFile arg :: IO Board
             putStr . unlines $
                 [ "problem:\n"
                 , indent 3 (show board)
@@ -58,4 +58,4 @@ main = do
     args <- getArgs
     if null args
         then gen lsolve
-        else evalStateT (mapM_ processArg args) lsolve
+        else evalStateT (void $ traverse processArg args) lsolve

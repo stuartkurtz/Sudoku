@@ -1,4 +1,4 @@
-module Control.Union where
+module Data.Union where
 
 import Data.Set (Set,empty,union)
 
@@ -9,4 +9,3 @@ newtype Union a = Union { getUnion :: Set a }
 instance Ord a => Monoid (Union a) where
     mempty = Union empty
     mappend x y = Union (getUnion x `union` getUnion y)
-
