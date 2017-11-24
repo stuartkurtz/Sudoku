@@ -40,7 +40,7 @@ hard = do
         b <- generate bsolve
         if isComplete (head (lsolve b))
             then genHard
-            else return b
+            else pure b
 
 -- | Process a command line argument. Note that arguments that don't
 --   have the form of a known command-line flag are interpreted as the
