@@ -1,5 +1,5 @@
 name:               sudoku
-version:            0.1.0.4
+version:            0.1.0.5
 synopsis:           A Sudoku solver/generator
 description:        A Sudoku solver/generator, with both backtracking
                     and logic-based solvers.
@@ -7,7 +7,7 @@ license:            GPL-3
 license-file:       LICENSE
 author:             Stuart A. Kurtz
 maintainer:         stuart@cs.uchicago.edu
-copyright:          © 2013-2016, Stuart A. Kurtz, All Rights Reserved.
+copyright:          © 2013-2017, Stuart A. Kurtz, All Rights Reserved.
 category:           Game
 build-type:         Simple
 cabal-version:      >=1.10
