@@ -9,6 +9,8 @@ import Data.Set (Set,empty,union)
 
 newtype Union a = Union { getUnion :: Set a }
 
+-- | The natural 'Semigroup' type class for 'Union'.
+
 instance Ord a => Semigroup (Union a) where
     x <> y = Union (getUnion x `union` getUnion y)
 
