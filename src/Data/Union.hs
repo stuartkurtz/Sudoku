@@ -9,8 +9,10 @@ import Data.Set (Set,empty,union)
 
 newtype Union a = Union { getUnion :: Set a }
 
+instance Ord a => Semigroup (Union a) where
+    x <> y = Union (getUnion x `union` getUnion y)
+
 -- | The natural 'Monoid' type class for 'Union'. 
 
 instance Ord a => Monoid (Union a) where
     mempty = Union empty
-    mappend x y = Union (getUnion x `union` getUnion y)
