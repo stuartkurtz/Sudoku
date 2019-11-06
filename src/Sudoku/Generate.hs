@@ -29,7 +29,7 @@ generate :: Solver -> RandState Board
 generate solver = do
     constraints <- Map.unions
                 <$> ( for positions $ \pos -> do
-                        Map.singleton pos <$> permute [1..9]
+                        Map.singleton pos <$> permute [1..order^two]
                     )
     let answer = head $ backtrack (constraints Map.!) (Board Map.empty)
     prune answer <$> permute positions

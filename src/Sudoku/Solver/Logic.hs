@@ -12,7 +12,7 @@ import qualified Data.Set as Set
 import Data.Union
 import Sudoku.Base
 
--- | A variable is given the same type as a `Board` association for 
+-- | A variable is given the same type as a `Board` association for
 --   computational convenience.
 
 type Var = (Position,Int)
@@ -25,7 +25,7 @@ mkVar :: Int -- ^ row
       -> Var
 mkVar row col val = ((row,col),val)
 
--- | The type of a 1-clause in our logic. A 1-clause asserts that 
+-- | The type of a 1-clause in our logic. A 1-clause asserts that
 --   precisely one of a set of variables is true.
 
 type OneClause = Set Var
@@ -34,7 +34,7 @@ type OneClause = Set Var
 
 type Theory = [OneClause]
 
--- | The initial `Theory`, which consists of the list of 1-clauses that 
+-- | The initial `Theory`, which consists of the list of 1-clauses that
 --   makes up the constraints of Sudoku.
 
 initialTheory :: Theory
@@ -42,14 +42,14 @@ initialTheory = concatMap genTheory [rvc,cvc,pvc,bvc] where
     rvc row val idx = mkVar row idx val
     cvc col val idx = mkVar idx col val
     pvc row col idx = mkVar row col idx
-    bvc blk val idx = mkVar (3*mjr+mnr+1) (3*mjc+mnc+1) val where
-        (mjr,mjc) = divMod (blk-1) 3
-        (mnr,mnc) = divMod (idx-1) 3
-    genTheory f = [ Set.fromList [f a b idx | idx <- [1..9]]
-                  | a <- [1..9]
-                  , b <- [1..9]]
+    bvc blk val idx = mkVar (order*mjr+mnr+1) (order*mjc+mnc+1) val where
+        (mjr,mjc) = divMod (blk-1) order
+        (mnr,mnc) = divMod (idx-1) order
+    genTheory f = [ Set.fromList [f a b idx | idx <- [1..order^two]]
+                  | a <- [1..order^two]
+                  , b <- [1..order^two]]
 
--- | The reduction monad. A computation that reduces the `Theory` 
+-- | The reduction monad. A computation that reduces the `Theory`
 --   contained in the `State`, while writing a set of variables
 --   that become asserted through the reduction process.
 
@@ -73,7 +73,7 @@ reduceAsserts asserts = do
                 1 -> Right (clause \\ asserts)
                 _ -> error "inconsistent problem"
 
--- | Construct a `Reduction` that begins with denying the argument's 
+-- | Construct a `Reduction` that begins with denying the argument's
 --   variables.
 
 reduceDenials :: Set Var -> Reduction ()

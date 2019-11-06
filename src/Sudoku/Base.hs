@@ -7,6 +7,16 @@ import Data.Char
 import Data.Map (Map)
 import qualified Data.Map as Map
 import Text.ParserCombinators.ReadP
+import Text.Printf
+
+-- | The order of the Sudoku system
+
+order :: Int
+order = 4
+
+two, four :: Int
+two = 2
+four = 4
 
 -- | The type of a location on a Sudoku board.
 
@@ -15,7 +25,7 @@ type Position = (Int,Int)
 -- | The list of valid `Position` values associated with a Sudoku board.
 
 positions :: [Position]
-positions = (,) <$> [1..9] <*> [1..9]
+positions = (,) <$> [1..order^two] <*> [1..order^two]
 
 -- | The type of a Sudoku board.
 
@@ -27,12 +37,12 @@ newtype Board = Board { getMap :: Map Position Int }
 instance Read Board where
     readsPrec _ = readP_to_S parseBoard where
         parseBoard = do
-            entries <- replicateM 81 (skipSpaces >> satisfy isEntry)
-            let assocs = filter (isDigit . snd) $ zip positions entries
+            entries <- replicateM (order^four) (skipSpaces >> getEntry)
+            let assocs = filter (all isDigit . snd) $ zip positions entries
             pure . Board
-                 . foldMap (\(p,v) -> Map.singleton p (ord v - ord '0'))
+                 . foldMap (\(p,v) -> Map.singleton p (read v))
                  $ assocs
-        isEntry c = isDigit c || c `elem` ".-_"
+        getEntry = munch1 isDigit <++ string "." <++ string "-" <++ string "_"
 
 -- | A simple 'Show' instance for 'Board', compatible with its 'Read'
 --   instance.
@@ -41,21 +51,21 @@ instance Show Board where
     show (Board board) = concatMap fmt positions where
         fmt pos = entry pos ++ separator pos
         separator (row,col)
-            | rem col 3 /= 0 = " "
-            | col < 9        = "   "
-            | rem row 3 /= 0 = "\n"
-            | row < 9        = "\n\n"
-            | otherwise      = "\n"
+            | col `rem` order /= 0 = " "
+            | col < order^two      = "   "
+            | row `rem` order /= 0 = "\n"
+            | row < order^two      = "\n\n"
+            | otherwise            = "\n"
         entry pos = case Map.lookup pos board of
-            Just x  -> show x
-            Nothing -> "."
-            
+            Just x  -> printf "%2d" x
+            Nothing -> " ."
+
 -- | A predicate on 'Board' which holds when the board contains a value
 --   for every position. Note that this implementation is intended for
 --   speed, and could be mislead by bad code.
 
 isComplete :: Board -> Bool
-isComplete (Board b) = Map.size b == 81
+isComplete (Board b) = Map.size b == order^four
 
 -- | The type of a Sudoku solver
 

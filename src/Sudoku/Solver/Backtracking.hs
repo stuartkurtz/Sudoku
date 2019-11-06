@@ -12,7 +12,7 @@ import Sudoku.Base
 -- | A backtracking Sudoku solver.
 
 bsolve :: Solver
-bsolve = backtrack (const [1..9])
+bsolve = backtrack (const [1..order^two])
 
 -- | A backtracking solver with additional positional constraints.
 
@@ -38,14 +38,14 @@ neighbors =  Map.unions [ Map.singleton p (neighborf p)
     where
     neighborf pos =
         delete pos . nub . concatMap ($ pos) $ [rowOf,colOf,blockOf]
-    rowOf (row,_) = map ((,) row)  [1..9]
-    colOf (_,col) = map (flip (,) col) [1..9]
+    rowOf (row,_) = map ((,) row)  [1..order^two]
+    colOf (_,col) = map (flip (,) col) [1..order^two]
     blockOf (row,col) =
         [ (trunc row + rx,trunc col + cx)
-        | rx <- [1..3]
-        , cx <- [1..3]
+        | rx <- [1..order]
+        , cx <- [1..order]
         ]
-    trunc x = nx - nx `mod` 3 where nx = x-1
+    trunc x = nx - nx `mod` order where nx = x-1
 
 -- | The list of values from a map associated with a list of keys.
 --   It is not an error for a key to be missing from a map, such
